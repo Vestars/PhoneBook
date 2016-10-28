@@ -1,0 +1,10 @@
+com\trans\lardi\dao\InfoDAO.class
+com\trans\lardi\controller\LoginController.class
+com\trans\lardi\db\Info.class
+com\trans\lardi\config\SecurityConfig.class
+com\trans\lardi\db\User.class
+com\trans\lardi\initializer\WebInitializer.class
+com\trans\lardi\dao\UserDAOImpl.class
+com\trans\lardi\config\AppConfig.class
+com\trans\lardi\dao\InfoDAOImpl.class
+com\trans\lardi\dao\UserDAO.class
