@@ -5,25 +5,29 @@ import javax.validation.constraints.Size;
 
 public class User {
 
-    @Size(min=3)
+    @Size(min = 3)
     @Pattern(regexp = "[a-zA-Z]+")
     private String username;
 
-    @Size(min=5)
+    @Size(min = 5)
     private String password;
 
-    @Size(min=5)
+    @Size(min = 5)
     private String fullname;
 
-    private String role;
+    private String authority;
 
-    public User(){}
+    private boolean enabled = false;
 
-    public User(String username, String password, String fullname, String role) {
+    public User() {
+    }
+
+    public User(String username, String password, String fullname, String authority, boolean enabled) {
         this.username = username;
         this.password = password;
         this.fullname = fullname;
-        this.role = role;
+        this.authority = authority;
+        this.enabled = enabled;
     }
 
     public String getUsername() {
@@ -50,11 +54,19 @@ public class User {
         this.fullname = fullname;
     }
 
-    public String getRole() {
-        return role;
+    public String getAuthority() {
+        return authority;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setAuthority(String authority) {
+        this.authority = authority;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

@@ -2,8 +2,8 @@ package com.trans.lardi.dao;
 
 import com.trans.lardi.db.Info;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,34 +11,54 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.sql.DataSource;
 import java.util.List;
 
-@Repository
+@Repository("infoDAO")
 public class InfoDAOImpl implements InfoDAO {
-    @Autowired
-    private DataSource dataSource;
 
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     @Autowired
-    public void init() {
+    public void init(DataSource dataSource) {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
     @Override
-    public List<Info> getAllInfoEntry() {
-        return jdbcTemplate.query("SELECT * FROM info WHERE info.user_id = user.id", BeanPropertyRowMapper.newInstance(Info.class));
+    public List<Info> getAllInformation() {
+        String SQL = "select * from info, users where info.users_name=users.username";
+        return jdbcTemplate.query(SQL, new InfoMapper());
     }
 
     @Override
-    public List<Info> getInfoEntries(String pattern) {
-        return jdbcTemplate.query("SELECT * FROM info WHERE (firstname OR secondname OR mobilephone) =:%pattern%", BeanPropertyRowMapper.newInstance(Info.class));
+    public List<Info> getAllInfo(String username) {
+        String SQL = "select * from info, users where info.users_name=users.username and users.enabled=true and info.users_name=:username";
+        return jdbcTemplate.query(SQL, new MapSqlParameterSource("username", username), new InfoMapper());
+    }
+
+    @Override
+    public Info getInfo(long id) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", id);
+        String SQL = "select * from info, users where info.users_name=users.username and users.enabled=true and id=:id";
+        return jdbcTemplate.queryForObject(SQL, params, new InfoMapper());
+    }
+
+    @Override
+    public List<Info> search(String pattern, String users_name) {
+
+        String SQL = "SELECT * FROM info WHERE info.users_name=:users_name " +
+                "and concat(secondname, firstname, middlename, mobilephone, homephone, " +
+                "adress, email) like :pattern";
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("users_name", users_name);
+        params.addValue("pattern", "%" + pattern + "%");
+        return jdbcTemplate.query(SQL, params, new InfoMapper());
     }
 
     @Transactional
     @Override
     public boolean save(Info info) {
         BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(info);
-        String SQL = "INSERT INTO info (firstname, secondname, middlename, mobilephone, homephone, address, email) " +
-                "values (:firstname, :secondname, :middlename, :mobilephone, :homephone, :address, :email)";
+        String SQL = "insert into info (secondname, firstname, middlename, mobilephone, homephone, adress, email, users_name) " +
+                "values (:secondname, :firstname, :middlename, :mobilephone, :homephone, :adress, :email, :users_name)";
 
         return jdbcTemplate.update(SQL, params) == 1;
     }
@@ -47,17 +67,16 @@ public class InfoDAOImpl implements InfoDAO {
     @Override
     public boolean update(Info info) {
         BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(info);
-        String SQL = "UPDATE info SET secondname=:secondname, firstname=:firstname, middlename=:middlename, mobilephone=:mobilephone," +
-                " homephone:=homephone, address=:address, email=:email WHERE id=:id";
-
+        String SQL = "update info set secondname=:secondname, firstname=:firstname, middlename=:middlename, mobilephone=:mobilephone," +
+                " homephone:=homephone, adress=:adress, email=:email, users_name=users_name where id=:id";
         return jdbcTemplate.update(SQL, params) == 1;
     }
 
     @Transactional
     @Override
     public boolean delete(long id) {
-        BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(id);
-
-        return jdbcTemplate.update("DELETE FROM info WHERE id=:id",params) == 1;
+        int countOfDeletedRows = jdbcTemplate.update("delete from info where id=:id", new MapSqlParameterSource("id", id));
+        System.out.println("Count " + countOfDeletedRows);
+        return countOfDeletedRows == 1;
     }
 }

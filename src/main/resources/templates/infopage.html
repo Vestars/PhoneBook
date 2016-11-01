@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" media="screen, projection"
+          href="/static/css/bootstrap-theme.css"
+          th:href="@{/css/bootstrap-theme.css}"/>
+    <link rel="stylesheet" type="text/css" media="screen, projection" href="/static/css/bootstrap.css"
+          th:href="@{/css/bootstrap.css}"/>
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <script src="/static/js/bootstrap.js" th:src="@{/../static/js/bootstrap.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <title th:text="#{navbar.phonebook}">Info</title>
+    <script>
+        function del(href) {
+            var doDelete = confirm("Вы уверены что хотите удалить эту запись?");
+
+            if (doDelete == false) {
+                event.preventDefault();
+                event.stopPropagation();
+                return;
+            } else {
+                location.href = href;
+            }
+            return false;
+        }
+    </script>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <li th:if="${#authorization.expression('isAuthenticated()')}">
+                <p class="navbar-text navbar-left"><span th:text="#{navbar.hi} + '!&nbsp;'"></span><span th:text="${#authentication.name + '!&nbsp;'}"></span></p>
+            </li>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/newinfo" th:href="@{newinfo(action='new')}" th:text="#{navbar.addentry}"></a></li>
+                <li>
+                    <div>
+                        <form class="navbar-form navbar-left" role="search" action="search" method="get">
+                            <div class="input-group">
+                                <input type="text"  name="pattern" class="form-control" style="height: 43px;">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="submit"><span class="material-icons md-18">search</span></button>
+                                    </span>
+                            </div><!-- /input-group -->
+                        </form>
+                    </div>
+
+
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li th:if="${#authorization.expression('isAuthenticated()')}" style="padding-right: 30px">
+                    <a href="/logout" th:href="@{/logout}" th:text="#{navbar.loguot}">Logout</a>
+                </li>
+            </ul>
+
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+</nav>
+<div class="container">
+    <div class="row">
+        <div id="mes" th:if="${message!=null}" class="alert alert-info" onload='mes()'>
+            <p th:text="${message}" align="center"></p>
+            <script>
+                $( "#mes" ).show(0).delay(5000).hide(0);
+            </script>
+        </div>
+        <div class="col-md-12" th:if="${!(infopage.isEmpty())}">
+            <h2 th:text="#{info.list.table.title}">Список записей</h2>
+                <table class="table table-hover">
+                    <tr>
+                        <th scope="col" data-th-text="#{info.list.secondname.label}">Фамилия</th>
+                        <th scope="col" data-th-text="#{info.list.firstname.label}">Имя</th>
+                        <th scope="col" data-th-text="#{info.list.middlename.label}">Отчество</th>
+                        <th scope="col" data-th-text="#{info.list.mobile.label}">Моб. тел.</th>
+                        <th scope="col" data-th-text="#{info.list.tel.label}">Дом. тел.</th>
+                        <th scope="col" data-th-text="#{info.list.address.label}">Адрес</th>
+                        <th scope="col" data-th-text="#{info.list.email.label}">Email</th>
+                        <th scope="col" data-th-text="#{info.list.action.label}">Действие</th>
+                    </tr>
+                    <tr data-th-each="newinfo : ${infopage}">
+                        <td data-th-text="${newinfo.secondname}">Фамилия</td>
+                        <td data-th-text="${newinfo.firstname}">Имя</td>
+                        <td data-th-text="${newinfo.middlename}">Отчество</td>
+                        <td data-th-text="${newinfo.mobilephone}">Моб. тел.</td>
+                        <td data-th-text="${newinfo.homephone}">Дом. тел.</td>
+                        <td data-th-text="${newinfo.adress}">Адрес</td>
+                        <td data-th-text="${newinfo.email}">Email</td>
+                        <td>
+                            <a href="#" th:href="@{/newinfo(action='edit',id=${newinfo.id})}" th:text="#{info.edit}">редакт.</a>
+                            |
+                            <a href="#" th:href="@{/delete(id=${newinfo.id})}"
+                               onclick="return confirm('Удалить запись?') ? true : false;" th:text="#{info.delete}">удалить</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        <div class="col-xs-12" th:unless="${!(infopage.isEmpty())}">
+            <p data-th-text="#{info.list.emptylist.label}" align="center">Записей нету</p>
+        </div>
+        <div class="col-xs-12 col-sm-3">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <p style="padding:20px;"></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

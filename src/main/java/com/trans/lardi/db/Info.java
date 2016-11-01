@@ -4,17 +4,16 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class Info {
+
     private long id;
 
-    private long user_id;
-
-    @Size(min=4)
+    @Size(min = 4)
     private String firstname;
 
-    @Size(min=4)
+    @Size(min = 4)
     private String secondname;
 
-    @Size(min=4)
+    @Size(min = 4)
     private String middlename;
 
     @Pattern(regexp = "^\\+380\\([0-9]{2}\\)[0-9]{7}")
@@ -26,11 +25,13 @@ public class Info {
 
     private String adress;
 
-    public Info(){}
+    private String users_name;
 
-    public Info(long id, long user_id, String firstname, String secondname, String middlename, String mobilephone, String homephone, String email, String adress) {
+    public Info() {
+    }
+
+    public Info(long id, String firstname, String secondname, String middlename, String mobilephone, String homephone, String email, String adress, String users_name) {
         this.id = id;
-        this.user_id = user_id;
         this.firstname = firstname;
         this.secondname = secondname;
         this.middlename = middlename;
@@ -38,6 +39,18 @@ public class Info {
         this.homephone = homephone;
         this.email = email;
         this.adress = adress;
+        this.users_name = users_name;
+    }
+
+    public Info(String firstname, String secondname, String middlename, String mobilephone, String homephone, String email, String adress, String users_name) {
+        this.firstname = firstname;
+        this.secondname = secondname;
+        this.middlename = middlename;
+        this.mobilephone = mobilephone;
+        this.homephone = homephone;
+        this.email = email;
+        this.adress = adress;
+        this.users_name = users_name;
     }
 
     public long getId() {
@@ -48,51 +61,43 @@ public class Info {
         this.id = id;
     }
 
-    public long getUserId() {
-        return user_id;
-    }
-
-    public void setUserId(long user_id) {
-        this.user_id = user_id;
-    }
-
-    public String getFirstName() {
+    public String getFirstname() {
         return firstname;
     }
 
-    public void setFirstName(String firstname) {
+    public void setFirstname(String firstname) {
         this.firstname = firstname;
     }
 
-    public String getSecondName() {
+    public String getSecondname() {
         return secondname;
     }
 
-    public void setSecondName(String secondname) {
+    public void setSecondname(String secondname) {
         this.secondname = secondname;
     }
 
-    public String getMiddleName() {
+    public String getMiddlename() {
         return middlename;
     }
 
-    public void setMiddleName(String middlename) {
+    public void setMiddlename(String middlename) {
         this.middlename = middlename;
     }
 
-    public String getMobilePhone() {
+    public String getMobilephone() {
         return mobilephone;
     }
 
-    public void setMobilePhone(String mobilephone) {
+    public void setMobilephone(String mobilephone) {
         this.mobilephone = mobilephone;
     }
 
-    public String getHomePhone() {
+    public String getHomephone() {
         return homephone;
     }
 
-    public void setHomePhone(String homephone) {
+    public void setHomephone(String homephone) {
         this.homephone = homephone;
     }
 
@@ -110,5 +115,13 @@ public class Info {
 
     public void setAdress(String adress) {
         this.adress = adress;
+    }
+
+    public String getUsers_name() {
+        return users_name;
+    }
+
+    public void setUsers_name(String users_name) {
+        this.users_name = users_name;
     }
 }
